@@ -1,7 +1,7 @@
 # RSA
 ## Principe général de l'algorithme:
 #### Génération de clés :
-•	Choisir deux grands nombres premiers distincts p et q.
+•	Choisir deux grands nombres premiers distincts 'p' et 'q'.
 •	Calculer leur produit n = p × q, qui sera utilisé comme partie de la clé publique.
 •	Calculer ϕ(n) = (p−1) × (q−1),  où ϕ(n) est la fonction indicatrice d'Euler.
 •	Choisir un entier e tel que 1 < e < ϕ(n), et que gcd(e , ϕ(n)) = 1, c'est-à-dire, e et ϕ(n) doivent être premiers entre eux.
