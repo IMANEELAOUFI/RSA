@@ -1,8 +1,7 @@
 import random
 from math import gcd
 
-
-# Fonction pour calculer l'inverse modulaire
+# Function to compute the modular inverse
 def modinv(a, m):
     m0, x0, x1 = m, 0, 1
     if m == 1:
@@ -16,14 +15,11 @@ def modinv(a, m):
     return x1
 
 
-# Génération des clés RSA avec 3 nombres premiers
 def generate_keys():
     p = 7
     q = 11
     r = 13
-
     n = p * q * r
-
     phi_n = (p - 1) * (q - 1) * (r - 1)
 
     e = 7
@@ -31,45 +27,40 @@ def generate_keys():
         e += 1
 
     d = modinv(e, phi_n)
-
     return (e, n), (d, n)
 
 
 def encrypt(message, pub_key):
     e, n = pub_key
-    k = random.randint(1, n - 1)
-    while gcd(k, n) != 1:  # k doit être co-prime avec n
-        k = random.randint(1, n - 1)
+    k = random.randint(2, n - 1)
+    while gcd(k, n) != 1:
+        k = random.randint(2, n - 1)
 
-    # Chiffrement
-    c = (pow(message, e, n) * k) % n
-    return c, k
 
-# Déchiffrement :
-def decrypt(ciphertext, priv_key, k):
+    text_as_numbers = [ord(char) for char in str(message)]
+    encrypted_message = [(pow(num, e, n) * k) % n for num in text_as_numbers]
+
+    return encrypted_message, k
+
+
+def decrypt(encrypted_message, priv_key, k):
     d, n = priv_key
-    c_prime = (ciphertext * modinv(k, n)) % n
-    message = pow(c_prime, d, n)
-    return message
 
+    k_inv = modinv(k, n)
 
-# Exemple d'utilisation
+    decrypted_numbers = [(pow(num * k_inv % n, d, n)) for num in encrypted_message]
+
+    return ''.join([chr(num) for num in decrypted_numbers])
+
 def rsa_example():
-    # Générer les clés publique et privée
     pub_key, priv_key = generate_keys()
 
-    # Le message à chiffrer (doit être < n)
-    message = 30
-    print(f"Message original: {message}")
+    message = input("Entrez un message (nombre ou texte) : ")
+    encrypted_message, k = encrypt(message, pub_key)
+    print(f"Message chiffré : {encrypted_message}")
 
-    # Chiffrement
-
-    ciphertext, k = encrypt(message, pub_key)
-    print(f"Message chiffré: {ciphertext}, avec le facteur k: {k}")
-
-    # Déchiffrement
-    decrypted_message = decrypt(ciphertext, priv_key, k)
-    print(f"Message déchiffré: {decrypted_message}")
+    decrypted_message = decrypt(encrypted_message, priv_key, k)
+    print(f"Message déchiffré : {decrypted_message}")
 
 
 rsa_example()
